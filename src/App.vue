@@ -1,11 +1,12 @@
 <template>
   <div id="app" class="container">
     <div id="display" class="display">
-      <h1>Press a note!</h1> 
+      <h1><input v-model="text" readonly /></h1>
       <DrumMachine
-        v-for="sound in sounds" :key="sound.id"
-        :text="sound.key"
-        :audio="sound.mp3" />
+        v-for="sound in sounds"
+        :key="sound.key"
+        :sound="sound"
+        @change-note="updateNote" />
     </div>
   </div>
 </template>
@@ -58,12 +59,17 @@ export default {
           mp3: "https://s3.amazonaws.com/freecodecamp/drums/Cev_H2.mp3"
         }
       ],
-      text: '',
-      audio: ''
+      text: 'Press a note!',
     }
   },
   methods: {
-    
+    updateNote(value) {
+      if(value) {
+        this.text = `${value} is playing!`;
+      } else {
+        this.text = 'Press a note!'
+      }
+    }
   }
 }
 </script>
@@ -98,6 +104,16 @@ export default {
   width: 360px;
   background-color: #fff;
   border-radius: 4px; 
+}
+
+input {
+  font-family: 'Roboto Mono', monospace;
+  border: none;
+  outline: none;
+  justify-content: center;
+  text-align: center;
+  font-size: 50%;
+  font-weight: bolder;
 }
 
 .drum-pad {

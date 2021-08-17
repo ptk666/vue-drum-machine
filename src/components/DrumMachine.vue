@@ -1,26 +1,44 @@
 <template>
   <div class="drum-pad"
-    @click="playSound(audio)" >
-    {{ text }}
+    @click="playSound(sound); changeNote()" >
+    {{ sound.key }}
   </div>
 </template>
 
 <script>
 export default {
   name: 'DrumMachine',
-  props: ['text', 'audio'],
+  props: ['sound'],
   data() {
     return {
-      input: '',
-      mp3: ''
+      
     }
   },
   methods: {
-    playSound(clip) {
-      let s = new Audio(clip);
+    playSound({key, mp3}) {
+      let s = new Audio(mp3);
       s.play();
-      console.log(clip, s);
+
+      this.note = key;
+
+      document.addEventListener('keydown', (e) => {
+        const id = e.key.toUpperCase();
+        const audio = document.getElementById(id);
+
+        console.log(id, audio);
+      })
+    },
+    changeNote() {
+      this.$emit('change-note', this.note);
     }
+  },
+  mounted() {
+    document.addEventListener('keydown', (e) => {
+      const id = e.key.toUpperCase();
+      const audio = document.getElementById(`${this.sound}.${id}`);
+
+      console.log(id, audio);
+    })
   }
 }
 </script>
