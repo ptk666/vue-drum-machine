@@ -1,6 +1,9 @@
 <template>
-  <div class="drum-pad"
-    @click="playSound(sound); changeNote()" >
+  <div class="drum-pad clip"
+    @click="playSound(sound); changeNote();"
+    :id="`drum-${sound.key}`"
+     >
+    <audio :src="sound.mp3" :id="sound.key" />
     {{ sound.key }}
   </div>
 </template>
@@ -11,7 +14,7 @@ export default {
   props: ['sound'],
   data() {
     return {
-      
+
     }
   },
   methods: {
@@ -21,24 +24,47 @@ export default {
 
       this.note = key;
 
-      document.addEventListener('keydown', (e) => {
-        const id = e.key.toUpperCase();
-        const audio = document.getElementById(id);
+      document.addEventListener('click', (e) => {
+        const id = e.target;
 
-        console.log(id, audio);
+        id.classList.add('active');
+        setTimeout(() => {
+          id.classList.remove('active');
+        }, 350)
       })
     },
     changeNote() {
       this.$emit('change-note', this.note);
+    },
+    keydownNote() {
+      document.addEventListener('keydown', (e) => {
+        const id = e.key.toUpperCase();
+        const audio = document.getElementById(id);
+
+        if(audio) {
+          const parent = audio.parentNode;          
+          audio.play();
+
+          parent.classList.add('active');
+          setTimeout(() => {
+            parent.classList.remove('active');
+          }, 350);
+
+          const display = parent.parentNode;
+          display.querySelector('input').value = `${id} is playing!`;
+        }
+      })
     }
   },
   mounted() {
-    document.addEventListener('keydown', (e) => {
-      const id = e.key.toUpperCase();
-      const audio = document.getElementById(`${this.sound}.${id}`);
+    this.keydownNote();
 
-      console.log(id, audio);
-    })
+    // this.audio.current.addEventListener('ended', (e) => {
+    //   const parent = e.target.parentNode;
+
+    //   console.log(parent);
+    //   parent.classList.remove('active');
+    // })
   }
 }
 </script>
